@@ -4,8 +4,8 @@ ruby '3.2.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 7'
-# Use postgresql as the database for Active Record
-gem 'pg'
+# Use mysql as the database for Active Record
+gem 'mysql2'
 # Use SCSS for stylesheets
 gem 'sass-rails'
 # Use Uglifier as compressor for JavaScript assets
@@ -21,6 +21,8 @@ gem 'bootsnap', require: false
 gem 'puma'
 
 gem 'awesome_print'
+
+gem 'spree_sample', '~> 4.6'
 
 group :development, :test do
   gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
@@ -72,6 +74,7 @@ gem 'sidekiq'
 # Spree gems
 gem 'spree', '~> 4.6'
 gem 'spree_sample', '~> 4.6'
+gem 'spree_frontend', '~> 4.6'
 gem 'spree_emails', '~> 4.6'
 gem 'spree_backend', '~> 4.6'
 gem 'spree_gateway', '~> 3.10'

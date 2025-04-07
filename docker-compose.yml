@@ -1,13 +1,30 @@
 version: '3.7'
 services:
-  postgres:
-    image: postgres:13-alpine
+  mysql:
+    image: mysql:8.0
     environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: spree_starter_development
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - 'postgres:/var/lib/postgresql/data'
+      - 'mysql:/var/lib/mysql'
+    command: --default-authentication-plugin=mysql_native_password
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - 'elasticsearch:/usr/share/elasticsearch/data'
   redis:
     image: redis:6.2-alpine
     ports:
@@ -16,7 +33,7 @@ services:
       - 'redis:/data'
   web:
     depends_on:
-      - 'postgres'
+      - 'mysql'
       - 'redis'
     build:
       context: .
@@ -30,12 +47,12 @@ services:
       - .env:/app/.env
     environment:
       REDIS_URL: redis://redis:6379/0
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_HOST: mysql
+      DB_PORT: 3306
       DISABLE_SPRING: 1
   worker:
     depends_on:
-      - 'postgres'
+      - 'mysql'
       - 'redis'
     build:
       context: .
@@ -47,11 +64,12 @@ services:
       - .env:/app/.env
     environment:
       REDIS_URL: redis://redis:6379/0
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_HOST: mysql
+      DB_PORT: 3306
       DISABLE_SPRING: 1
 
 volumes:
   redis:
-  postgres:
+  mysql:
+  elasticsearch:
   bundle_cache:

@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
+  get 'home/index'
   # Spree routes
-  mount Spree::Core::Engine, at: '/'
 
   # sidekiq web UI
   require 'sidekiq/web'
@@ -9,4 +9,7 @@ Rails.application.routes.draw do
       password == Rails.application.secrets.sidekiq_password
   end
   mount Sidekiq::Web, at: '/sidekiq'
+
+  root to: 'home#index'
+  mount Spree::Core::Engine, at: '/'
 end
