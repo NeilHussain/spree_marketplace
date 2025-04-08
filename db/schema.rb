@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_07_225259) do
   create_table "action_mailbox_inbound_emails", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.string "message_id", null: false
@@ -517,6 +517,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.index ["position"], name: "index_spree_option_values_on_position"
   end
 
+  create_table "spree_order_commissions", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "order_id"
+    t.bigint "vendor_id"
+    t.float "amount"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+    t.index ["order_id", "vendor_id"], name: "index_spree_order_commissions_on_order_id_and_vendor_id", unique: true
+    t.index ["order_id"], name: "index_spree_order_commissions_on_order_id"
+    t.index ["vendor_id"], name: "index_spree_order_commissions_on_vendor_id"
+  end
+
   create_table "spree_order_promotions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "order_id"
     t.bigint "promotion_id"
@@ -760,6 +771,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.json "private_metadata"
     t.string "status", default: "draft", null: false
     t.datetime "make_active_at", precision: nil
+    t.bigint "vendor_id"
     t.index ["available_on"], name: "index_spree_products_on_available_on"
     t.index ["deleted_at"], name: "index_spree_products_on_deleted_at"
     t.index ["discontinue_on"], name: "index_spree_products_on_discontinue_on"
@@ -770,6 +782,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.index ["status", "deleted_at"], name: "index_spree_products_on_status_and_deleted_at"
     t.index ["status"], name: "index_spree_products_on_status"
     t.index ["tax_category_id"], name: "index_spree_products_on_tax_category_id"
+    t.index ["vendor_id"], name: "index_spree_products_on_vendor_id"
   end
 
   create_table "spree_products_stores", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -963,8 +976,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.bigint "reimbursement_id"
     t.json "public_metadata"
     t.json "private_metadata"
+    t.bigint "refunder_id"
     t.index ["payment_id"], name: "index_spree_refunds_on_payment_id"
     t.index ["refund_reason_id"], name: "index_refunds_on_refund_reason_id"
+    t.index ["refunder_id"], name: "index_spree_refunds_on_refunder_id"
     t.index ["reimbursement_id"], name: "index_spree_refunds_on_reimbursement_id"
   end
 
@@ -1133,8 +1148,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.string "code"
     t.json "public_metadata"
     t.json "private_metadata"
+    t.bigint "vendor_id"
     t.index ["deleted_at"], name: "index_spree_shipping_methods_on_deleted_at"
     t.index ["tax_category_id"], name: "index_spree_shipping_methods_on_tax_category_id"
+    t.index ["vendor_id"], name: "index_spree_shipping_methods_on_vendor_id"
   end
 
   create_table "spree_shipping_rates", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -1183,7 +1200,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.datetime "deleted_at", precision: nil
     t.json "public_metadata"
     t.json "private_metadata"
-    t.index "`stock_location_id`, `variant_id`, (coalesce(`deleted_at`,cast(_utf8mb4\\'1970-01-01\\' as datetime)))", name: "stock_item_by_loc_var_id_deleted_at", unique: true
+    t.index "`stock_location_id`, `variant_id`, (coalesce(`deleted_at`,cast(_utf8mb4'1970-01-01' as datetime)))", name: "index_spree_stock_items_unique_without_deleted_at", unique: true
+    t.index "`stock_location_id`, `variant_id`, (coalesce(`deleted_at`,cast(_utf8mb4'1970-01-01' as datetime)))", name: "stock_item_by_loc_var_id_deleted_at", unique: true
     t.index ["backorderable"], name: "index_spree_stock_items_on_backorderable"
     t.index ["deleted_at"], name: "index_spree_stock_items_on_deleted_at"
     t.index ["stock_location_id", "variant_id"], name: "stock_item_by_loc_and_var_id"
@@ -1208,11 +1226,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.boolean "backorderable_default", default: false
     t.boolean "propagate_all_variants", default: false
     t.string "admin_name"
+    t.datetime "deleted_at", precision: nil
+    t.bigint "vendor_id"
     t.index ["active"], name: "index_spree_stock_locations_on_active"
     t.index ["backorderable_default"], name: "index_spree_stock_locations_on_backorderable_default"
     t.index ["country_id"], name: "index_spree_stock_locations_on_country_id"
+    t.index ["deleted_at"], name: "index_spree_stock_locations_on_deleted_at"
     t.index ["propagate_all_variants"], name: "index_spree_stock_locations_on_propagate_all_variants"
     t.index ["state_id"], name: "index_spree_stock_locations_on_state_id"
+    t.index ["vendor_id"], name: "index_spree_stock_locations_on_vendor_id"
   end
 
   create_table "spree_stock_movements", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -1395,8 +1417,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.string "meta_description"
     t.string "meta_keywords"
     t.string "permalink"
+    t.string "pretty_name"
     t.index ["locale", "permalink"], name: "unique_permalink_per_locale", unique: true
     t.index ["locale"], name: "index_spree_taxon_translations_on_locale"
+    t.index ["pretty_name"], name: "index_spree_taxon_translations_on_pretty_name"
     t.index ["spree_taxon_id", "locale"], name: "index_spree_taxon_translations_on_spree_taxon_id_and_locale", unique: true
   end
 
@@ -1441,6 +1465,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.boolean "hide_from_nav", default: false
     t.json "public_metadata"
     t.json "private_metadata"
+    t.string "pretty_name"
     t.index ["lft"], name: "index_spree_taxons_on_lft"
     t.index ["name", "parent_id", "taxonomy_id"], name: "index_spree_taxons_on_name_and_parent_id_and_taxonomy_id", unique: true
     t.index ["name"], name: "index_spree_taxons_on_name"
@@ -1448,6 +1473,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.index ["permalink", "parent_id", "taxonomy_id"], name: "index_spree_taxons_on_permalink_and_parent_id_and_taxonomy_id", unique: true
     t.index ["permalink"], name: "index_taxons_on_permalink"
     t.index ["position"], name: "index_spree_taxons_on_position"
+    t.index ["pretty_name"], name: "index_spree_taxons_on_pretty_name"
     t.index ["rgt"], name: "index_spree_taxons_on_rgt"
     t.index ["taxonomy_id"], name: "index_taxons_on_taxonomy_id"
   end
@@ -1523,6 +1549,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.json "public_metadata"
     t.json "private_metadata"
     t.string "barcode"
+    t.string "weight_unit"
+    t.string "dimensions_unit"
+    t.bigint "vendor_id"
     t.index ["barcode"], name: "index_spree_variants_on_barcode"
     t.index ["deleted_at"], name: "index_spree_variants_on_deleted_at"
     t.index ["discontinue_on"], name: "index_spree_variants_on_discontinue_on"
@@ -1532,6 +1561,47 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
     t.index ["sku"], name: "index_spree_variants_on_sku"
     t.index ["tax_category_id"], name: "index_spree_variants_on_tax_category_id"
     t.index ["track_inventory"], name: "index_spree_variants_on_track_inventory"
+    t.index ["vendor_id"], name: "index_spree_variants_on_vendor_id"
+  end
+
+  create_table "spree_vendor_translations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.text "about_us"
+    t.text "contact_us"
+    t.string "slug"
+    t.string "locale", null: false
+    t.integer "spree_vendor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["locale", "slug"], name: "vendor_unique_slug_per_locale", unique: true
+    t.index ["locale"], name: "index_spree_vendor_translations_on_locale"
+    t.index ["spree_vendor_id"], name: "fk_rails_d4443b7e43"
+  end
+
+  create_table "spree_vendor_users", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "vendor_id"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_spree_vendor_users_on_user_id"
+    t.index ["vendor_id", "user_id"], name: "index_spree_vendor_users_on_vendor_id_and_user_id", unique: true
+    t.index ["vendor_id"], name: "index_spree_vendor_users_on_vendor_id"
+  end
+
+  create_table "spree_vendors", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+    t.string "state"
+    t.datetime "deleted_at", precision: nil
+    t.string "slug"
+    t.text "about_us"
+    t.text "contact_us"
+    t.float "commission_rate", default: 5.0
+    t.integer "priority"
+    t.string "notification_email"
+    t.index ["deleted_at"], name: "index_spree_vendors_on_deleted_at"
+    t.index ["name"], name: "index_spree_vendors_on_name", unique: true
+    t.index ["slug"], name: "index_spree_vendors_on_slug", unique: true
+    t.index ["state"], name: "index_spree_vendors_on_state"
   end
 
   create_table "spree_webhooks_events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -1621,4 +1691,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_154171) do
   add_foreign_key "spree_store_translations", "spree_stores"
   add_foreign_key "spree_taxon_translations", "spree_taxons"
   add_foreign_key "spree_taxonomy_translations", "spree_taxonomies"
+  add_foreign_key "spree_vendor_translations", "spree_vendors"
 end

@@ -22,8 +22,6 @@ gem 'puma'
 
 gem 'awesome_print'
 
-gem 'spree_sample', '~> 4.6'
-
 group :development, :test do
   gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 
@@ -82,6 +80,8 @@ gem 'spree_auth_devise', '~> 4.5'
 gem 'spree_i18n', '~> 5.3'
 gem 'spree_dev_tools', require: false, group: %w[test development]
 
+gem 'spree_multi_vendor', github: 'spree-contrib/spree_multi_vendor'
+
 # Sentry Client
 gem 'sentry-raven'
 
@@ -103,4 +103,4 @@ gem 'activerecord-nulldb-adapter'
 gem 'oj'
 
 # Fix SCSS errors with Ruby 3 on MacOS
-gem 'sassc', github: 'sass/sassc-ruby', group: :development
+gem 'sassc', '~> 2.4'

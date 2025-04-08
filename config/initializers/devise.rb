@@ -1,4 +1,4 @@
-Devise.secret_key = Rails.application.secrets.secret_key_base
+Devise.secret_key = Rails.application.credentials.secret_key_base
 
 Rails.application.config.after_initialize do
   if defined?(Spree::Auth)
