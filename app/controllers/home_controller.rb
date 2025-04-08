@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  layout 'spree/frontend'
+  layout 'spree/home'
   
   def index
   end
