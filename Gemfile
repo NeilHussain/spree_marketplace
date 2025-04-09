@@ -102,5 +102,8 @@ gem 'activerecord-nulldb-adapter'
 # improved JSON rendering performance
 gem 'oj'
 
+#import nihaopayment gem
+gem 'nihaopay-ruby'
+
 # Fix SCSS errors with Ruby 3 on MacOS
 gem 'sassc', '~> 2.4'
