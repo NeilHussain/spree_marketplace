@@ -103,7 +103,7 @@ gem 'activerecord-nulldb-adapter'
 gem 'oj'
 
 #import nihaopayment gem
-gem 'nihaopay-ruby'
+#gem 'nihaopay-ruby'
 
 # Fix SCSS errors with Ruby 3 on MacOS
 gem 'sassc', '~> 2.4'
