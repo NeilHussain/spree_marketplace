@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_07_225259) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_09_195234) do
   create_table "action_mailbox_inbound_emails", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.string "message_id", null: false
@@ -1564,6 +1564,28 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_225259) do
     t.index ["vendor_id"], name: "index_spree_variants_on_vendor_id"
   end
 
+  create_table "spree_vendor_product_prices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "vendor_product_id", null: false
+    t.string "country_iso", null: false
+    t.string "currency", default: "USD"
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vendor_product_id", "country_iso"], name: "idx_on_vendor_product_id_country_iso_ca7156eb75", unique: true
+    t.index ["vendor_product_id"], name: "index_spree_vendor_product_prices_on_vendor_product_id"
+  end
+
+  create_table "spree_vendor_products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "vendor_id", null: false
+    t.bigint "product_id", null: false
+    t.boolean "enabled", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_spree_vendor_products_on_product_id"
+    t.index ["vendor_id", "product_id"], name: "index_spree_vendor_products_on_vendor_id_and_product_id", unique: true
+    t.index ["vendor_id"], name: "index_spree_vendor_products_on_vendor_id"
+  end
+
   create_table "spree_vendor_translations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.text "about_us"
@@ -1691,5 +1713,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_225259) do
   add_foreign_key "spree_store_translations", "spree_stores"
   add_foreign_key "spree_taxon_translations", "spree_taxons"
   add_foreign_key "spree_taxonomy_translations", "spree_taxonomies"
+  add_foreign_key "spree_vendor_product_prices", "spree_vendor_products", column: "vendor_product_id"
+  add_foreign_key "spree_vendor_products", "spree_products", column: "product_id"
+  add_foreign_key "spree_vendor_products", "spree_vendors", column: "vendor_id"
   add_foreign_key "spree_vendor_translations", "spree_vendors"
 end
