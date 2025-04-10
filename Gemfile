@@ -102,6 +102,9 @@ gem 'activerecord-nulldb-adapter'
 # improved JSON rendering performance
 gem 'oj'
 
+# Elasticsearch
+gem 'chewy'
+
 #import nihaopayment gem
 #gem 'nihaopay-ruby'
 
